@@ -1,20 +1,19 @@
 package com.example.auth.controller;
 
+import com.example.auth.dto.AuthResponseDto;
 import com.example.auth.dto.LoginDto;
 import com.example.auth.dto.RegisterDto;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.security.JwtProvider;
+import com.example.auth.security.JwtTokenType;
 import com.example.auth.security.SecurityConstants;
+import com.example.auth.util.CookieUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,32 +28,47 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final CookieUtil cookieUtil;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
+    public AuthController(UserRepository userRepository,
+                          PasswordEncoder passwordEncoder,
+                          AuthenticationManager authenticationManager,
+                          JwtProvider jwtProvider,
+                          CookieUtil cookieUtil
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
+        this.cookieUtil = cookieUtil;
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
+            );
 
-        String token = jwtProvider.generateToken(authentication);
-        ResponseCookie jwtCookie = ResponseCookie.from(SecurityConstants.ACCESS_TOKEN_NAME, token).maxAge(60 * 60).path("/").build();
-        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+            UserEntity user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow();
 
-        return new ResponseEntity<>(token, HttpStatus.OK);
+            String accessToken = jwtProvider.generateToken(user, JwtTokenType.ACCESS_TOKEN);
+            String refreshToken = jwtProvider.generateToken(user, JwtTokenType.REFRESH_TOKEN);
+
+            cookieUtil.setJwtTokenToCookie(response, accessToken, JwtTokenType.ACCESS_TOKEN);
+            cookieUtil.setJwtTokenToCookie(response, refreshToken, JwtTokenType.REFRESH_TOKEN);
+
+            return ResponseEntity.ok(new AuthResponseDto(accessToken, refreshToken, "User logged in successfully"));
+        } catch (Exception e) {
+            return new ResponseEntity<>(new AuthResponseDto(null, null, "Invalid credentials"), HttpStatus.UNAUTHORIZED);
+        }
     }
 
+
     @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto, HttpServletResponse response) {
+    public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterDto registerDto, HttpServletResponse response) {
         if (userRepository.existsUserByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new AuthResponseDto(null, null, "Username already taken"), HttpStatus.BAD_REQUEST);
         }
 
         UserEntity user = new UserEntity();
@@ -65,12 +79,20 @@ public class AuthController {
 
         userRepository.save(user);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), registerDto.getPassword());
-        String token = jwtProvider.generateToken(authentication);
-        ResponseCookie jwtCookie = ResponseCookie.from(SecurityConstants.ACCESS_TOKEN_NAME, token).maxAge(60 * 60).path("/").build();
-        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        String accessToken = jwtProvider.generateToken(user, JwtTokenType.ACCESS_TOKEN);
+        String refreshToken = jwtProvider.generateToken(user, JwtTokenType.REFRESH_TOKEN);
 
-        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+        cookieUtil.setJwtTokenToCookie(response, accessToken, JwtTokenType.ACCESS_TOKEN);
+        cookieUtil.setJwtTokenToCookie(response, refreshToken, JwtTokenType.REFRESH_TOKEN);
+
+        return ResponseEntity.ok(new AuthResponseDto(accessToken, refreshToken, "User registered successfully"));
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<AuthResponseDto> logout(HttpServletResponse response) {
+        cookieUtil.deleteCookie(response, SecurityConstants.ACCESS_TOKEN_NAME);
+        cookieUtil.deleteCookie(response, SecurityConstants.REFRESH_TOKEN_NAME);
+        return ResponseEntity.ok(new AuthResponseDto(null, null, "User logged out successfully"));
     }
 
 }
