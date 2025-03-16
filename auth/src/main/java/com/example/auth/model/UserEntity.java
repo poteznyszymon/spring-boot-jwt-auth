@@ -26,6 +26,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private String password;
+
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
