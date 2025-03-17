@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CookieUtil {
 
-    public void setJwtTokenToCookie( HttpServletResponse response, String token, JwtTokenType tokenType) {
+    public void setJwtTokenToCookie(HttpServletResponse response, String token, JwtTokenType tokenType) {
         ResponseCookie responseCookie = ResponseCookie
                 .from(tokenType == JwtTokenType.ACCESS_TOKEN
                         ? SecurityConstants.ACCESS_TOKEN_NAME

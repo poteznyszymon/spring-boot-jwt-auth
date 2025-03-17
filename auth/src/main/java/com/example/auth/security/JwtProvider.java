@@ -15,10 +15,10 @@ import java.util.function.Function;
 @Component
 public class JwtProvider {
 
-    public String generateToken(UserEntity user, JwtTokenType tokenType) {
+    public String generateToken(String username, JwtTokenType tokenType) {
 
         return Jwts.builder()
-                .subject(user.getUsername())
+                .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() +
                         (tokenType == JwtTokenType.ACCESS_TOKEN ? 60 * 60 * 1000 : 60 * 60 * 1000 * 24 * 7)))

@@ -59,8 +59,8 @@ public class AuthController {
 
             UserEntity user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow();
 
-            String accessToken = jwtProvider.generateToken(user, JwtTokenType.ACCESS_TOKEN);
-            String refreshToken = jwtProvider.generateToken(user, JwtTokenType.REFRESH_TOKEN);
+            String accessToken = jwtProvider.generateToken(user.getUsername(), JwtTokenType.ACCESS_TOKEN);
+            String refreshToken = jwtProvider.generateToken(user.getUsername(), JwtTokenType.REFRESH_TOKEN);
 
             cookieUtil.setJwtTokenToCookie(response, accessToken, JwtTokenType.ACCESS_TOKEN);
             cookieUtil.setJwtTokenToCookie(response, refreshToken, JwtTokenType.REFRESH_TOKEN);
@@ -86,8 +86,8 @@ public class AuthController {
 
         userRepository.save(user);
 
-        String accessToken = jwtProvider.generateToken(user, JwtTokenType.ACCESS_TOKEN);
-        String refreshToken = jwtProvider.generateToken(user, JwtTokenType.REFRESH_TOKEN);
+        String accessToken = jwtProvider.generateToken(user.getUsername(), JwtTokenType.ACCESS_TOKEN);
+        String refreshToken = jwtProvider.generateToken(user.getUsername(), JwtTokenType.REFRESH_TOKEN);
 
         cookieUtil.setJwtTokenToCookie(response, accessToken, JwtTokenType.ACCESS_TOKEN);
         cookieUtil.setJwtTokenToCookie(response, refreshToken, JwtTokenType.REFRESH_TOKEN);
