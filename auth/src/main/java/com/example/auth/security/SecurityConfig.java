@@ -1,6 +1,5 @@
 package com.example.auth.security;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,16 +37,6 @@ public class SecurityConfig {
                 ).userDetailsService(customUserDetailsService)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                /*
-                .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
-                        .clearAuthentication(true)
-                        .deleteCookies(SecurityConstants.ACCESS_TOKEN_NAME)
-                        .logoutSuccessHandler(((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK);
-                        })))
-
-                 */
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

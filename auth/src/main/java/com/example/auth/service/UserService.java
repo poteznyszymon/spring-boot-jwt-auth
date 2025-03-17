@@ -2,9 +2,11 @@ package com.example.auth.service;
 
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class UserService {
     private final UserRepository userRepository;
 
@@ -19,6 +21,10 @@ public class UserService {
             throw new IllegalArgumentException("User not found with username " + username);
         }
 
-        return user.get();
+        UserEntity userToReturn = user.get();
+        userToReturn.setPassword("");
+
+        return userToReturn;
+
     }
 }
