@@ -3,7 +3,7 @@ package com.example.auth.controller;
 import com.example.auth.dto.AuthResponseDto;
 import com.example.auth.dto.LoginDto;
 import com.example.auth.dto.RegisterDto;
-import com.example.auth.dto.UserResponseDto;
+import com.example.auth.dto.UserDto;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.security.JwtProvider;
@@ -21,8 +21,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -103,8 +101,8 @@ public class AuthController {
     }
 
     @GetMapping("me")
-    public ResponseEntity<UserResponseDto> getMe(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserDto> getMe(@AuthenticationPrincipal User user) {
         UserEntity currentUser =  userService.findByUsername(user.getUsername());
-        return ResponseEntity.ok(UserResponseDto.toDto(currentUser));
+        return ResponseEntity.ok(UserDto.toDto(currentUser));
     }
 }

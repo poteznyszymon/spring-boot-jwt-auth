@@ -28,7 +28,7 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
 
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", "Unauthorized");
-        errorResponse.put("message", "You need to be authorized, to access that endpoint");
+        errorResponse.put("message", !authException.getMessage().isEmpty() ? authException.getMessage() : "You need to be authorized, to access that endpoint");
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }

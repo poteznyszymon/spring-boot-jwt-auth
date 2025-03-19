@@ -21,10 +21,7 @@ public class UserService {
             throw new IllegalArgumentException("User not found with username " + username);
         }
 
-        UserEntity userToReturn = user.get();
-        userToReturn.setPassword("");
-
-        return userToReturn;
+        return user.get();
 
     }
 }
