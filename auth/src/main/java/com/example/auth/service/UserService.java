@@ -22,6 +22,15 @@ public class UserService {
         }
 
         return user.get();
+    }
 
+    public UserEntity findById(long userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("User not found with id " + userId);
+        }
+
+        return user.get();
     }
 }

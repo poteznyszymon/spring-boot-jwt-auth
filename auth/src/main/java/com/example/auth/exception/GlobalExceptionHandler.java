@@ -49,4 +49,12 @@ public class GlobalExceptionHandler {
         error.put("message", e.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(FollowException.class)
+    public ResponseEntity<Map<String, String>> handleFollowException(FollowException e) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Illegal follow action");
+        error.put("message", e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }
