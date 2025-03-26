@@ -14,11 +14,11 @@ public class FollowEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follow_id_seq")
     public long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "following_user_id", nullable = false)
     public UserEntity following_user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "followed_user_id", nullable = false)
     public UserEntity followed_user;
 

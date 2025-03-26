@@ -1,6 +1,9 @@
 package com.example.auth.service;
 
+import com.example.auth.dto.FollowDto;
 import com.example.auth.dto.PostCreateDto;
+import com.example.auth.dto.PostDto;
+import com.example.auth.dto.UserDto;
 import com.example.auth.exception.PostNotFoundException;
 import com.example.auth.model.PostEntity;
 import com.example.auth.model.UserEntity;
@@ -12,14 +15,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
 
     private final PostRepository postRepository;
+    private final FollowService followService;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, FollowService followService) {
         this.postRepository = postRepository;
+        this.followService = followService;
     }
 
     public PostEntity createPost(PostCreateDto postDto, UserEntity user) {
@@ -53,4 +59,11 @@ public class PostService {
         return post;
     }
 
+    public List<PostDto> getFollowingUsersPosts(String username) {
+        List<UserDto> followingUsers = followService.getFollowedUsers(username);
+        List<String> followingUsersUsernames = followingUsers.stream().map(UserDto::getUsername).collect(Collectors.toList());
+
+        List<PostEntity> posts = postRepository.findFollowingUsersPosts(followingUsersUsernames);
+        return posts.stream().map(PostDto::toDto).collect(Collectors.toList());
+    }
 }

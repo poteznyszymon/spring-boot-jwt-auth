@@ -102,7 +102,7 @@ public class AuthController {
 
     @GetMapping("me")
     public ResponseEntity<UserDto> getMe(@AuthenticationPrincipal User user) {
-        UserEntity currentUser =  userService.findByUsername(user.getUsername());
+        UserEntity currentUser = userService.findByUsername(user.getUsername());
         return ResponseEntity.ok(UserDto.toDto(currentUser));
     }
 }

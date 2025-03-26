@@ -5,6 +5,7 @@ import jakarta.annotation.Nonnull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     @Transactional
     @Query("UPDATE PostEntity p SET p.content = :newContent WHERE p.id = :id")
     void updatePostContent(Long id, String newContent);
+
+    @Query("SELECT p FROM PostEntity p WHERE p.user.username IN :usernames")
+    List<PostEntity> findFollowingUsersPosts(@Param("usernames") List<String> usernames);
 }

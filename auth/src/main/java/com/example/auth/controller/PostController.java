@@ -66,4 +66,10 @@ public class PostController {
         return ResponseEntity.ok(posts.stream().map(PostDto::toDto).collect(Collectors.toList()));
     }
 
+    @GetMapping("/following")
+    public ResponseEntity<List<PostDto>> getFollowingUsersPosts(@AuthenticationPrincipal User user) {
+        List<PostDto> posts = postService.getFollowingUsersPosts(user.getUsername());
+        return ResponseEntity.ok(posts);
+    }
+
 }
