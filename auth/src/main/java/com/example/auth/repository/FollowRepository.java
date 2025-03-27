@@ -2,6 +2,8 @@ package com.example.auth.repository;
 
 import com.example.auth.model.FollowEntity;
 import com.example.auth.model.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +27,5 @@ public interface FollowRepository extends JpaRepository<FollowEntity, Long> {
 
     @Query("SELECT f.following_user FROM FollowEntity f WHERE f.followed_user.id = :followedUserId")
     List<UserEntity> findFollowingUsersByFollowedUserId(long followedUserId);
-
 
 }
