@@ -8,6 +8,8 @@ import com.example.auth.exception.PostNotFoundException;
 import com.example.auth.model.PostEntity;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,11 @@ public class PostService {
         }
         postRepository.deleteById(postId);
         return post;
+    }
+
+    public Page<PostDto> getAllPosts(Pageable pageable) {
+        Page<PostEntity> posts = postRepository.findAll(pageable);
+        return posts.map(PostDto::toDto);
     }
 
     public PostEntity editPost(long postId, String currentUserUsername, String newContent) {

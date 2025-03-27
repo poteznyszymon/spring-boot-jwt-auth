@@ -6,6 +6,8 @@ import com.example.auth.model.PostEntity;
 import com.example.auth.model.UserEntity;
 import com.example.auth.service.PostService;
 import com.example.auth.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -52,6 +54,12 @@ public class PostController {
         long parsedPostId = Long.parseLong(postId);
         PostEntity editedPost = postService.editPost(parsedPostId, user.getUsername(), postEditDto.getContent());
         return ResponseEntity.ok(PostDto.toDto(editedPost));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<PostDto>> getAllPosts(Pageable pageable) {
+        Page<PostDto> posts = postService.getAllPosts(pageable);
+        return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/")
