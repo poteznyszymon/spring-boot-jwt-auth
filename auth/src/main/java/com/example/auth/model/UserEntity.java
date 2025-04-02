@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -35,7 +34,5 @@ public class UserEntity {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<PostEntity> posts;
+
 }
