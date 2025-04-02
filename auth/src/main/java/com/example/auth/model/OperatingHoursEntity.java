@@ -15,30 +15,30 @@ public class OperatingHoursEntity {
     private long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "monday_id", referencedColumnName = "id")
+    @JoinColumn(name = "monday", referencedColumnName = "id")
     private TimeRangeEntity monday;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tuesday_id", referencedColumnName = "id")
+    @JoinColumn(name = "tuesday", referencedColumnName = "id")
     private TimeRangeEntity tuesday;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "wednesday_id", referencedColumnName = "id")
+    @JoinColumn(name = "wednesday", referencedColumnName = "id")
     private TimeRangeEntity wednesday;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "thursday_id", referencedColumnName = "id")
+    @JoinColumn(name = "thursday", referencedColumnName = "id")
     private TimeRangeEntity thursday;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "friday_id", referencedColumnName = "id")
+    @JoinColumn(name = "friday", referencedColumnName = "id")
     private TimeRangeEntity friday;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "saturday_id", referencedColumnName = "id")
+    @JoinColumn(name = "saturday", referencedColumnName = "id")
     private TimeRangeEntity saturday;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sunday_id", referencedColumnName = "id")
+    @JoinColumn(name = "sunday", referencedColumnName = "id")
     private TimeRangeEntity sunday;
 }

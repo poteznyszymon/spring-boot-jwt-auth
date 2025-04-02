@@ -1,8 +1,8 @@
 package com.example.auth.controller;
 
-import com.example.auth.dto.AuthResponseDto;
-import com.example.auth.dto.LoginDto;
-import com.example.auth.dto.RegisterDto;
+import com.example.auth.dto.auth.AuthResponseDto;
+import com.example.auth.dto.auth.LoginDto;
+import com.example.auth.dto.auth.RegisterDto;
 import com.example.auth.dto.UserDto;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.UserRepository;

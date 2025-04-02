@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -29,6 +30,12 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewEntity> reviews;
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<RestaurantEntity> restaurantsAdded;
 
     @CreationTimestamp
     @Column(updatable = false, nullable = false)

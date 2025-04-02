@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "time_range")
@@ -16,11 +16,10 @@ public class TimeRangeEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     private long id;
 
-    private LocalDateTime openTime;
+    @Column(nullable = false)
+    private LocalTime openTime;
 
-    private LocalDateTime closeTime;
-
-    @OneToOne(mappedBy = "time_range")
-    private OperatingHoursEntity operatingHours;
+    @Column(nullable = false)
+    private LocalTime closeTime;
 
 }

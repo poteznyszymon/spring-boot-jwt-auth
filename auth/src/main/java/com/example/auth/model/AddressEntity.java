@@ -31,4 +31,7 @@ public class AddressEntity {
 
     @Column(nullable = false)
     private String country;
+
+    @OneToOne(mappedBy = "address")
+    private RestaurantEntity restaurant;
 }
