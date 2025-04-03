@@ -3,6 +3,8 @@ package com.example.auth.controller;
 import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.restaurant.RestaurantCreateDto;
 import com.example.auth.dto.restaurant.RestaurantDto;
+import com.example.auth.dto.review.ReviewCreateDto;
+import com.example.auth.dto.review.ReviewDto;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.service.RestaurantService;
 import jakarta.validation.Valid;
