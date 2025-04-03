@@ -34,15 +34,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(PostNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handlePostNotFoundException(PostNotFoundException e) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Not found");
-        error.put("message", e.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
-
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException e) {
         Map<String, String> error = new HashMap<>();
@@ -51,13 +42,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(FollowException.class)
-    public ResponseEntity<Map<String, String>> handleFollowException(FollowException e) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Illegal follow action");
-        error.put("message", e.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String,String>> handleIllegalArgumentException(IllegalArgumentException e) {
@@ -65,5 +49,13 @@ public class GlobalExceptionHandler {
         error.put("error", "Illegal action");
         error.put("message", e.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String,String>> handleResourceNotFoundException(ResourceNotFoundException e) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Not Found");
+        error.put("message", e.getMessage().isEmpty() ? "Resource not found" : e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 }

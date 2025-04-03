@@ -1,6 +1,8 @@
 package com.example.auth.controller;
 
+import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.restaurant.RestaurantCreateDto;
+import com.example.auth.dto.restaurant.RestaurantDto;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.service.RestaurantService;
 import jakarta.validation.Valid;
@@ -10,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/restaurant")
@@ -22,16 +27,34 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public Page<RestaurantEntity> listRestaurants(Pageable pageable) {
-        return restaurantService.listRestaurants(pageable);
+    public Page<RestaurantDto> listRestaurants(Pageable pageable) {
+        return restaurantService.listRestaurants(pageable)
+                .map(entity -> DtoConverter.convertToDto(entity, RestaurantDto.class));
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<RestaurantDto> getRestaurantById(@PathVariable long id) {
+        return ResponseEntity.ok(
+                DtoConverter.convertToDto(restaurantService.getRestaurantById(id), RestaurantDto.class)
+        );
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<RestaurantDto>> get(@PathVariable String name) {
+        List<RestaurantEntity> restaurants = restaurantService.getRestaurantsContainingName(name);
+        return ResponseEntity.ok(restaurants.stream().map(
+                entity -> DtoConverter.convertToDto(entity, RestaurantDto.class)
+        ).collect(Collectors.toList()));
     }
 
     @PostMapping
-    public ResponseEntity<RestaurantCreateDto> createRestaurant(
+    public ResponseEntity<RestaurantDto> AddRestaurant(
             @Valid @RequestBody RestaurantCreateDto restaurantCreateDto,
             @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(restaurantCreateDto);
+        RestaurantDto restaurantDto = DtoConverter
+                .convertToDto(restaurantService.AddRestaurant(user, restaurantCreateDto), RestaurantDto.class);
+        return ResponseEntity.ok(restaurantDto);
     }
 
 }

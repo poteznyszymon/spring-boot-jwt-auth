@@ -1,4 +1,4 @@
-package com.example.auth.dto;
+package com.example.auth.dto.user;
 
 import com.example.auth.model.UserEntity;
 import lombok.Data;
