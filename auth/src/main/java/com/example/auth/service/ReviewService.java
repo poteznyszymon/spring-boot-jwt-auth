@@ -1,12 +1,12 @@
 package com.example.auth.service;
 
-import com.example.auth.controller.ReviewController;
 import com.example.auth.dto.review.ReviewCreateDto;
 import com.example.auth.exception.ResourceNotFoundException;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.model.ReviewEntity;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.ReviewRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -45,8 +45,20 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-    public ReviewEntity deleteReviewFromRestaurant() {
-        return null;
+    public ReviewEntity deleteReviewById(
+            @AuthenticationPrincipal User user,
+            long reviewId
+    ) {
+        UserEntity currentUser = userService.findByUsername(user.getUsername());
+        ReviewEntity review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+
+        if (!review.getCreatedBy().equals(currentUser)) {
+            throw new AccessDeniedException("Can't delete review, you are not owner");
+        }
+
+        reviewRepository.delete(review);
+        return review;
     }
 
 }

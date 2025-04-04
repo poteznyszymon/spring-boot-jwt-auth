@@ -32,4 +32,14 @@ public class ReviewController {
         );
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ReviewDto> deleteReviewById(
+            @PathVariable long id,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(DtoConverter
+                .convertToDto(reviewService.deleteReviewById(user, id), ReviewDto.class)
+        );
+    }
+
 }

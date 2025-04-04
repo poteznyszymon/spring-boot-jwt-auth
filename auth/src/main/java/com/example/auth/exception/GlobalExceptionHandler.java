@@ -1,5 +1,6 @@
 package com.example.auth.exception;
 
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -57,5 +58,13 @@ public class GlobalExceptionHandler {
         error.put("error", "Not Found");
         error.put("message", e.getMessage().isEmpty() ? "Resource not found" : e.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<Map<String,String>> handleFileUploadException(FileUploadException e) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Upload error");
+        error.put("message", e.getMessage().isEmpty() ? "File upload failed" : e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
