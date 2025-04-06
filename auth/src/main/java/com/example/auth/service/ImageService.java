@@ -1,8 +1,6 @@
 package com.example.auth.service;
 
-import com.cloudinary.Cloudinary;
 import com.example.auth.dto.image.ImageCreateDto;
-import com.example.auth.dto.image.ImageDto;
 import com.example.auth.model.ImageEntity;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.repository.ImageRepository;

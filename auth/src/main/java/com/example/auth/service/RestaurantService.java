@@ -8,8 +8,10 @@ import com.example.auth.model.*;
 import com.example.auth.repository.RestaurantRepository;
 import com.example.auth.repository.RestaurantRepositoryWithPagination;
 import com.example.auth.repository.ReviewRepository;
+import com.example.auth.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -23,17 +25,19 @@ public class RestaurantService {
     private final RestaurantRepositoryWithPagination restaurantRepositoryWithPagination;
     private final UserService userService;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
     public RestaurantService(
             RestaurantRepository restaurantRepository,
             RestaurantRepositoryWithPagination restaurantRepositoryWithPagination,
             UserService userService,
-            ReviewRepository reviewRepository
-            ) {
+        ReviewRepository reviewRepository,
+            UserRepository userRepository) {
         this.restaurantRepository = restaurantRepository;
         this.restaurantRepositoryWithPagination = restaurantRepositoryWithPagination;
         this.userService = userService;
         this.reviewRepository = reviewRepository;
+        this.userRepository = userRepository;
     }
 
     public Page<RestaurantEntity> listRestaurants(Pageable pageable) {
@@ -66,6 +70,21 @@ public class RestaurantService {
         restaurant.setCreatedBy(currentUser);
         
         return restaurantRepository.save(restaurant);
+    }
+
+    public RestaurantEntity deleteRestaurant(
+            @AuthenticationPrincipal User user,
+            long restaurantId
+    ) {
+        UserEntity currentUser = userService.findByUsername(user.getUsername());
+        RestaurantEntity restaurantToDelete = getRestaurantById(restaurantId);
+
+        if (!restaurantToDelete.getCreatedBy().equals(currentUser)) {
+            throw new AccessDeniedException("Can't delete restaurant, you are not creator");
+        }
+
+        restaurantRepository.delete(restaurantToDelete);
+        return restaurantToDelete;
     }
 
 }

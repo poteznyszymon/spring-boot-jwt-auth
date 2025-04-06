@@ -5,8 +5,6 @@ import com.example.auth.dto.image.ImageCreateDto;
 import com.example.auth.dto.image.ImageDto;
 import com.example.auth.dto.restaurant.RestaurantCreateDto;
 import com.example.auth.dto.restaurant.RestaurantDto;
-import com.example.auth.dto.review.ReviewCreateDto;
-import com.example.auth.dto.review.ReviewDto;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.service.ImageService;
 import com.example.auth.service.RestaurantService;
@@ -66,6 +64,14 @@ public class RestaurantController {
         RestaurantDto restaurantDto = DtoConverter
                 .convertToDto(restaurantService.AddRestaurant(user, restaurantCreateDto), RestaurantDto.class);
         return ResponseEntity.ok(restaurantDto);
+    }
+
+    @DeleteMapping("/{restaurantId}")
+    public ResponseEntity<RestaurantDto> deleteRestaurant(
+            @AuthenticationPrincipal User user,
+            @PathVariable long restaurantId
+    ) {
+        return ResponseEntity.ok(DtoConverter.convertToDto(restaurantService.deleteRestaurant(user, restaurantId), RestaurantDto.class));
     }
 
     @PostMapping("/{restaurantId}/image")

@@ -25,6 +25,8 @@ public class RestaurantDto {
 
     private float averageRatings;
 
+    private float totalReviews;
+
     private AddressDto address;
 
     private GeolocationDto geolocation;

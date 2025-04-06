@@ -31,6 +31,8 @@ public class RestaurantEntity {
 
     private float averageRatings = 0;
 
+    private int totalReviews = 0;
+
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
