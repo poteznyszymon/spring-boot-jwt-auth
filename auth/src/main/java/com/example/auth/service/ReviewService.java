@@ -91,8 +91,6 @@ public class ReviewService {
         }
         restaurant.setTotalReviews(restaurant.getTotalReviews() - 1);
 
-
-
         for (ImageEntity image: review.getImages()) {
             cloudinaryService.deleteImageByUrl(image.getUrl());
         }
