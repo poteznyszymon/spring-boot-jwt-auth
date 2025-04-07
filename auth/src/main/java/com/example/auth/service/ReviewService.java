@@ -2,11 +2,13 @@ package com.example.auth.service;
 
 import com.example.auth.dto.review.ReviewCreateDto;
 import com.example.auth.exception.ResourceNotFoundException;
+import com.example.auth.model.ImageEntity;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.model.ReviewEntity;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.RestaurantRepository;
 import com.example.auth.repository.ReviewRepository;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -20,16 +22,24 @@ public class ReviewService {
     private final RestaurantService restaurantService;
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
+    private final CloudinaryService cloudinaryService;
 
     public ReviewService(
             UserService userService,
             RestaurantService restaurantService,
             ReviewRepository reviewRepository,
-            RestaurantRepository restaurantRepository) {
+            RestaurantRepository restaurantRepository, CloudinaryService cloudinaryService) {
         this.userService =  userService;
         this.restaurantService = restaurantService;
         this.reviewRepository = reviewRepository;
         this.restaurantRepository = restaurantRepository;
+        this.cloudinaryService = cloudinaryService;
+    }
+
+    public ReviewEntity getReviewById(long reviewId) {
+        return reviewRepository
+                .findById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found with provided id"));
     }
 
     @Transactional
@@ -56,10 +66,11 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
+    @Transactional
     public ReviewEntity deleteReviewById(
             @AuthenticationPrincipal User user,
             long reviewId
-    ) {
+    ) throws FileUploadException {
         UserEntity currentUser = userService.findByUsername(user.getUsername());
         ReviewEntity review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
@@ -67,6 +78,7 @@ public class ReviewService {
         if (!review.getCreatedBy().equals(currentUser)) {
             throw new AccessDeniedException("Can't delete review, you are not owner");
         }
+
 
         RestaurantEntity restaurant = review.getRestaurant();
 
@@ -78,6 +90,12 @@ public class ReviewService {
             restaurant.setAverageRatings(0.f);
         }
         restaurant.setTotalReviews(restaurant.getTotalReviews() - 1);
+
+
+
+        for (ImageEntity image: review.getImages()) {
+            cloudinaryService.deleteImageByUrl(image.getUrl());
+        }
 
         reviewRepository.delete(review);
         restaurantRepository.save(restaurant);

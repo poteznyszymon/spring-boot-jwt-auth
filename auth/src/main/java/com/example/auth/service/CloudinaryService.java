@@ -31,4 +31,13 @@ public class CloudinaryService {
         }
     }
 
+    public void deleteImageByUrl(String url) throws FileUploadException {
+        try {
+            System.out.println(url.split("/")[6].split("\\?")[0]);
+            cloudinary.uploader().destroy(url.split("/")[6].split("\\?")[0], Collections.EMPTY_MAP);
+        } catch (IOException error) {
+            throw new FileUploadException("File destroy failed", error);
+        }
+    }
+
 }

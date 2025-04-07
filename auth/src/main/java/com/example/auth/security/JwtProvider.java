@@ -1,6 +1,5 @@
 package com.example.auth.security;
 
-import com.example.auth.model.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,7 +21,8 @@ public class JwtProvider {
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() +
                         (tokenType == JwtTokenType.ACCESS_TOKEN ? 60 * 60 * 1000 : 60 * 60 * 1000 * 24 * 7)))
-                /// access token - 1 hour refresh token - 7 days
+                /// access token - 1
+                ///hour refresh token - 7 days
                 .signWith(getSigningKey())
                 .compact();
     }
