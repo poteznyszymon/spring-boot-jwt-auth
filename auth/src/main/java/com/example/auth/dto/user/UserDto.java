@@ -1,5 +1,6 @@
 package com.example.auth.dto.user;
 
+import com.example.auth.dto.image.ImageDto;
 import com.example.auth.model.UserEntity;
 import lombok.Data;
 
@@ -11,15 +12,7 @@ public class UserDto {
     private String username;
     private String firstName;
     private String lastName;
+    private ImageDto profileImage;
+    private ImageDto coverImage;
     private LocalDateTime createdAt;
-
-    public static UserDto toDto(UserEntity user) {
-        UserDto dto = new UserDto();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setCreatedAt(user.getCreatedAt());
-        return dto;
-    }
 }

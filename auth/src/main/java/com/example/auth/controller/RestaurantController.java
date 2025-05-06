@@ -4,7 +4,8 @@ import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.image.ImageCreateDto;
 import com.example.auth.dto.image.ImageDto;
 import com.example.auth.dto.restaurant.RestaurantCreateDto;
-import com.example.auth.dto.restaurant.RestaurantDto;
+import com.example.auth.dto.restaurant.RestaurantDetailsDto;
+import com.example.auth.dto.restaurant.RestaurantSummaryDto;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.service.ImageService;
 import com.example.auth.service.RestaurantService;
@@ -36,42 +37,42 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public Page<RestaurantDto> listRestaurants(Pageable pageable) {
+    public Page<RestaurantSummaryDto> listRestaurants(Pageable pageable) {
         return restaurantService.listRestaurants(pageable)
-                .map(entity -> DtoConverter.convertToDto(entity, RestaurantDto.class));
+                .map(entity -> DtoConverter.convertToDto(entity, RestaurantSummaryDto.class));
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<RestaurantDto> getRestaurantById(@PathVariable long id) {
+    public ResponseEntity<RestaurantDetailsDto> getRestaurantById(@PathVariable long id) {
         return ResponseEntity.ok(
-                DtoConverter.convertToDto(restaurantService.getRestaurantById(id), RestaurantDto.class)
+                DtoConverter.convertToDto(restaurantService.getRestaurantById(id), RestaurantDetailsDto.class)
         );
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<List<RestaurantDto>> get(@PathVariable String name) {
+    public ResponseEntity<List<RestaurantSummaryDto>> get(@PathVariable String name) {
         List<RestaurantEntity> restaurants = restaurantService.getRestaurantsContainingName(name);
         return ResponseEntity.ok(restaurants.stream().map(
-                entity -> DtoConverter.convertToDto(entity, RestaurantDto.class)
+                entity -> DtoConverter.convertToDto(entity, RestaurantSummaryDto.class)
         ).collect(Collectors.toList()));
     }
 
     @PostMapping
-    public ResponseEntity<RestaurantDto> AddRestaurant(
+    public ResponseEntity<RestaurantDetailsDto> AddRestaurant(
             @Valid @RequestBody RestaurantCreateDto restaurantCreateDto,
             @AuthenticationPrincipal User user
     ) {
-        RestaurantDto restaurantDto = DtoConverter
-                .convertToDto(restaurantService.AddRestaurant(user, restaurantCreateDto), RestaurantDto.class);
+        RestaurantDetailsDto restaurantDto = DtoConverter
+                .convertToDto(restaurantService.AddRestaurant(user, restaurantCreateDto), RestaurantDetailsDto.class);
         return ResponseEntity.ok(restaurantDto);
     }
 
     @DeleteMapping("/{restaurantId}")
-    public ResponseEntity<RestaurantDto> deleteRestaurant(
+    public ResponseEntity<RestaurantDetailsDto> deleteRestaurant(
             @AuthenticationPrincipal User user,
             @PathVariable long restaurantId
-    ) {
-        return ResponseEntity.ok(DtoConverter.convertToDto(restaurantService.deleteRestaurant(user, restaurantId), RestaurantDto.class));
+    ) throws FileUploadException {
+        return ResponseEntity.ok(DtoConverter.convertToDto(restaurantService.deleteRestaurant(user, restaurantId), RestaurantDetailsDto.class));
     }
 
     @PostMapping("/{restaurantId}/image")

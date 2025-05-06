@@ -7,5 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class FileUploadException extends RuntimeException {
     public FileUploadException(String message, Throwable cause) {
         super(message, cause);
+
+
     }
 }

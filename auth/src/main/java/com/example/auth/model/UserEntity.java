@@ -2,7 +2,6 @@ package com.example.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +32,14 @@ public class UserEntity {
     @JsonIgnore
     @Column(nullable = false)
     private String password;
+
+    @OneToOne()
+    @JoinColumn(name = "profile_img_id", referencedColumnName = "id")
+    private ImageEntity profileImage;
+
+    @OneToOne()
+    @JoinColumn(name = "cover_image_id", referencedColumnName = "id")
+    private ImageEntity coverImage;
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> reviews;

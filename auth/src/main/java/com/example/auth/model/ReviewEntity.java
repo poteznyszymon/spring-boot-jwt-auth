@@ -39,7 +39,7 @@ public class ReviewEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity createdBy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private RestaurantEntity restaurant;
 }

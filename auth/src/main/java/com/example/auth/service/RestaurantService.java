@@ -2,13 +2,13 @@ package com.example.auth.service;
 
 import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.restaurant.RestaurantCreateDto;
-import com.example.auth.dto.review.ReviewCreateDto;
 import com.example.auth.exception.ResourceNotFoundException;
 import com.example.auth.model.*;
 import com.example.auth.repository.RestaurantRepository;
 import com.example.auth.repository.RestaurantRepositoryWithPagination;
 import com.example.auth.repository.ReviewRepository;
 import com.example.auth.repository.UserRepository;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,18 +26,20 @@ public class RestaurantService {
     private final UserService userService;
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
 
     public RestaurantService(
             RestaurantRepository restaurantRepository,
             RestaurantRepositoryWithPagination restaurantRepositoryWithPagination,
             UserService userService,
-        ReviewRepository reviewRepository,
-            UserRepository userRepository) {
+            ReviewRepository reviewRepository,
+            UserRepository userRepository, CloudinaryService cloudinaryService) {
         this.restaurantRepository = restaurantRepository;
         this.restaurantRepositoryWithPagination = restaurantRepositoryWithPagination;
         this.userService = userService;
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public Page<RestaurantEntity> listRestaurants(Pageable pageable) {
@@ -75,12 +77,16 @@ public class RestaurantService {
     public RestaurantEntity deleteRestaurant(
             @AuthenticationPrincipal User user,
             long restaurantId
-    ) {
+    ) throws FileUploadException {
         UserEntity currentUser = userService.findByUsername(user.getUsername());
         RestaurantEntity restaurantToDelete = getRestaurantById(restaurantId);
 
         if (!restaurantToDelete.getCreatedBy().equals(currentUser)) {
             throw new AccessDeniedException("Can't delete restaurant, you are not creator");
+        }
+
+        for (ImageEntity image: restaurantToDelete.getImages()) {
+            cloudinaryService.deleteImageByUrl(image.getUrl());
         }
 
         restaurantRepository.delete(restaurantToDelete);

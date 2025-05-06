@@ -1,5 +1,6 @@
 package com.example.auth.controller;
 
+import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.auth.AuthResponseDto;
 import com.example.auth.dto.auth.LoginDto;
 import com.example.auth.dto.auth.RegisterDto;
@@ -103,6 +104,6 @@ public class AuthController {
     @GetMapping("me")
     public ResponseEntity<UserDto> getMe(@AuthenticationPrincipal User user) {
         UserEntity currentUser = userService.findByUsername(user.getUsername());
-        return ResponseEntity.ok(UserDto.toDto(currentUser));
+        return ResponseEntity.ok(DtoConverter.convertToDto(currentUser, UserDto.class));
     }
 }
