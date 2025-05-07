@@ -15,7 +15,7 @@ public class UserDetailsDto {
     private ImageDto coverImage;
     private int totalReviews = 0;
     private int totalFavorites = 0;
-    private float averageRating;
+    private Float averageRating;
     private String profileDescription;
     private LocalDateTime createdAt;
 }
