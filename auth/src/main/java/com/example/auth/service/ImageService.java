@@ -16,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
 
@@ -82,6 +83,7 @@ public class ImageService {
         return imageRepository.save(image);
     }
 
+    @Transactional
     public ImageDto uploadProfileImageToUser(
             @AuthenticationPrincipal User user,
             ProfileImageDto profileImageDto
@@ -104,6 +106,7 @@ public class ImageService {
         return DtoConverter.convertToDto(newProfileImage, ImageDto.class);
     }
 
+    @Transactional
     public ImageDto uploadCoverImageToUser(
             @AuthenticationPrincipal User user,
             CoverImageDto coverImageDto
@@ -112,6 +115,10 @@ public class ImageService {
 
         ImageEntity oldImage = currentUser.getCoverImage();
         if (oldImage != null && oldImage.getUrl() != null && !oldImage.getUrl().isEmpty()) {
+
+            currentUser.setCoverImage(null);
+            userRepository.save(currentUser);
+
             cloudinaryService.deleteImageByUrl(oldImage.getUrl());
             imageRepository.delete(oldImage);
         }

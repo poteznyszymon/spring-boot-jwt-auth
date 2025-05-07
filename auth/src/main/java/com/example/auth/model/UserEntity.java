@@ -33,6 +33,8 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
+    private String profileDescription;
+
     @OneToOne()
     @JoinColumn(name = "profile_img_id", referencedColumnName = "id")
     private ImageEntity profileImage;

@@ -1,5 +1,6 @@
 package com.example.auth.dto;
 
+import com.example.auth.model.ReviewEntity;
 import org.modelmapper.ModelMapper;
 
 public class DtoConverter {
@@ -14,5 +15,6 @@ public class DtoConverter {
     public static <E, D> E convertToEntity(D dto, Class<E> entityClass) {
         return modelMapper.map(dto, entityClass);
     }
+
 
 }

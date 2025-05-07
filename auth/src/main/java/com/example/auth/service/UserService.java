@@ -1,5 +1,7 @@
 package com.example.auth.service;
 
+import com.example.auth.dto.DtoConverter;
+import com.example.auth.dto.user.UserDetailsDto;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -9,9 +11,11 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RatingService ratingService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RatingService ratingService) {
         this.userRepository = userRepository;
+        this.ratingService = ratingService;
     }
 
     public UserEntity findByUsername(String username) {
@@ -22,6 +26,20 @@ public class UserService {
         }
 
         return user.get();
+    }
+
+    public UserDetailsDto getUserDetailsByUsername(String username) {
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("User not found with username " + username);
+        }
+
+        UserDetailsDto userDto = DtoConverter.convertToDto(user.get(), UserDetailsDto.class);
+        userDto.setAverageRating(ratingService.getAverageRatingByUsername(username));
+        userDto.setTotalReviews(ratingService.getTotalReviewsByUsername(username));
+
+        return userDto;
     }
 
     public UserEntity findById(long userId) {

@@ -14,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/review")
 public class ReviewController {
@@ -24,6 +26,11 @@ public class ReviewController {
     public ReviewController(ReviewService reviewService, ImageService imageService) {
         this.reviewService = reviewService;
         this.imageService = imageService;
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<List<ReviewDto>> getReviewsByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(reviewService.getReviewsByUserUsername(username));
     }
 
     @PostMapping("/{restaurantId}")

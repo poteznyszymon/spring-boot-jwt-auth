@@ -1,6 +1,8 @@
 package com.example.auth.service;
 
+import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.review.ReviewCreateDto;
+import com.example.auth.dto.review.ReviewDto;
 import com.example.auth.exception.ResourceNotFoundException;
 import com.example.auth.model.ImageEntity;
 import com.example.auth.model.RestaurantEntity;
@@ -14,6 +16,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
@@ -40,6 +45,17 @@ public class ReviewService {
         return reviewRepository
                 .findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with provided id"));
+    }
+
+    public List<ReviewDto> getReviewsByUserUsername(String username) {
+        return reviewRepository.findByCreatedBy_Username(username).
+                stream().
+                map(entity -> DtoConverter.convertToDto(entity, ReviewDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public Float getAverageRatingByUsername(String username) {
+        return reviewRepository.findAverageRatingByUsername(username);
     }
 
     @Transactional
