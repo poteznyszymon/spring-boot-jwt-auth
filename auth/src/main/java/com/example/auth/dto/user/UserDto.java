@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 public class UserDto {
     private long id;
     private String username;
-    //private String firstName;
-    //private String lastName;
+    private String firstName;
+    private String lastName;
+    private String profileDescription;
     private ImageDto profileImage;
-    //private ImageDto coverImage;
-    //private LocalDateTime createdAt;
+    private ImageDto coverImage;
+    private LocalDateTime createdAt;
 }

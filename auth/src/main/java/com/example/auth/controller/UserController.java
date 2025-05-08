@@ -5,6 +5,8 @@ import com.example.auth.dto.image.CoverImageDto;
 import com.example.auth.dto.image.ImageDto;
 import com.example.auth.dto.image.ProfileImageDto;
 import com.example.auth.dto.user.UserDetailsDto;
+import com.example.auth.dto.user.UserDto;
+import com.example.auth.dto.user.UserEditDataDto;
 import com.example.auth.service.ImageService;
 import com.example.auth.service.UserService;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -29,6 +31,14 @@ public class UserController {
     @GetMapping("/{username}")
     public ResponseEntity<UserDetailsDto> getUserDetailsByUsername(@PathVariable String username) {
         return ResponseEntity.ok(userService.getUserDetailsByUsername(username));
+    }
+
+    @PostMapping()
+    public ResponseEntity<UserDto> editUserData(
+            @AuthenticationPrincipal User user,
+            @RequestBody UserEditDataDto userEditDataDto
+    ) {
+        return ResponseEntity.ok(userService.editUserData(user, userEditDataDto));
     }
 
 
