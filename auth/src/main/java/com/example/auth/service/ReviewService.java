@@ -9,8 +9,12 @@ import com.example.auth.model.RestaurantEntity;
 import com.example.auth.model.ReviewEntity;
 import com.example.auth.model.UserEntity;
 import com.example.auth.repository.RestaurantRepository;
+import com.example.auth.repository.RestaurantRepositoryWithPagination;
 import com.example.auth.repository.ReviewRepository;
+import com.example.auth.repository.ReviewRepositoryWithPagination;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -28,17 +32,24 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
     private final CloudinaryService cloudinaryService;
+    private final RestaurantRepositoryWithPagination restaurantRepositoryWithPagination;
+    private final ReviewRepositoryWithPagination reviewRepositoryWithPagination;
 
     public ReviewService(
             UserService userService,
             RestaurantService restaurantService,
             ReviewRepository reviewRepository,
-            RestaurantRepository restaurantRepository, CloudinaryService cloudinaryService) {
+            RestaurantRepository restaurantRepository,
+            CloudinaryService cloudinaryService,
+            RestaurantRepositoryWithPagination restaurantRepositoryWithPagination,
+            ReviewRepositoryWithPagination reviewRepositoryWithPagination) {
         this.userService =  userService;
         this.restaurantService = restaurantService;
         this.reviewRepository = reviewRepository;
         this.restaurantRepository = restaurantRepository;
         this.cloudinaryService = cloudinaryService;
+        this.restaurantRepositoryWithPagination = restaurantRepositoryWithPagination;
+        this.reviewRepositoryWithPagination = reviewRepositoryWithPagination;
     }
 
     public ReviewEntity getReviewById(long reviewId) {
@@ -47,11 +58,18 @@ public class ReviewService {
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with provided id"));
     }
 
-    public List<ReviewDto> getReviewsByUserUsername(String username) {
-        return reviewRepository.findByCreatedBy_Username(username).
-                stream().
-                map(entity -> DtoConverter.convertToDto(entity, ReviewDto.class))
-                .collect(Collectors.toList());
+    public Page<ReviewDto> getReviewsByUserUsername(Pageable pageable, String username) {
+        return reviewRepositoryWithPagination.
+                findByCreatedBy_Username(pageable, username)
+                .map(entity -> DtoConverter.convertToDto(entity, ReviewDto.class));
+    }
+
+    public List<ReviewDto> getRecentReviewsByUsername(String username) {
+        return reviewRepository
+                .findTop2ByCreatedBy_UsernameOrderByCreatedBy(username)
+                .stream()
+                .map(entity -> DtoConverter.convertToDto(entity, ReviewDto.class))
+                .toList();
     }
 
     public Float getAverageRatingByUsername(String username) {

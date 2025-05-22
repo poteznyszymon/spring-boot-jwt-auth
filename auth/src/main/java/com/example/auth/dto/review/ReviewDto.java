@@ -1,6 +1,7 @@
 package com.example.auth.dto.review;
 
 import com.example.auth.dto.image.ImageDto;
+import com.example.auth.dto.restaurant.RestaurantSummaryDto;
 import com.example.auth.dto.user.UserDto;
 import lombok.Data;
 
@@ -17,5 +18,6 @@ public class ReviewDto {
     private LocalDateTime editedAt;
     private List<ImageDto> images;
     private UserDto createdBy;
+    private RestaurantSummaryDto restaurant;
 
 }

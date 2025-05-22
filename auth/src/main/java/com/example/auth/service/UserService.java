@@ -53,15 +53,7 @@ public class UserService {
     ) {
         UserEntity currentUser = findByUsername(user.getUsername());
 
-        //String newUsername = editUserData.getUsername();
         String newDescription = editUserData.getProfileDescription();
-
-        /*
-        if (!newUsername.isEmpty() && !newUsername.equals(currentUser.getUsername())) {
-            currentUser.setUsername(newUsername);
-        }
-
-         */
 
         if (newDescription != null && !newDescription.isEmpty() && !newDescription.equals(currentUser.getProfileDescription())) {
             currentUser.setProfileDescription(newDescription);

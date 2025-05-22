@@ -10,7 +10,8 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     Optional<ReviewEntity> findById(long id);
-    List<ReviewEntity> findByCreatedBy_Username(String username);
+
+    List<ReviewEntity> findTop2ByCreatedBy_UsernameOrderByCreatedBy(String username);
 
     @Query("SELECT AVG(r.rating) FROM ReviewEntity r WHERE r.createdBy.username = :username")
     Float findAverageRatingByUsername(@Param("username") String username);

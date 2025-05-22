@@ -9,6 +9,8 @@ import com.example.auth.service.ImageService;
 import com.example.auth.service.ReviewService;
 import jakarta.validation.Valid;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -29,8 +31,15 @@ public class ReviewController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<List<ReviewDto>> getReviewsByUsername(@PathVariable String username) {
-        return ResponseEntity.ok(reviewService.getReviewsByUserUsername(username));
+    public Page<ReviewDto> getReviewsByUsername(Pageable pageable, @PathVariable String username) {
+        return reviewService.getReviewsByUserUsername(pageable, username);
+    }
+
+    @GetMapping("/{username}/recent")
+    public ResponseEntity<List<ReviewDto>> getRecentReviewByUsername(
+            @PathVariable String username
+    ) {
+        return ResponseEntity.ok(reviewService.getRecentReviewsByUsername(username));
     }
 
     @PostMapping("/{restaurantId}")
