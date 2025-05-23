@@ -5,6 +5,7 @@ import com.example.auth.dto.image.ImageCreateDto;
 import com.example.auth.dto.image.ImageDto;
 import com.example.auth.dto.review.ReviewCreateDto;
 import com.example.auth.dto.review.ReviewDto;
+import com.example.auth.dto.review.VoteReviewDto;
 import com.example.auth.service.ImageService;
 import com.example.auth.service.ReviewService;
 import jakarta.validation.Valid;
@@ -37,9 +38,10 @@ public class ReviewController {
 
     @GetMapping("/{username}/recent")
     public ResponseEntity<List<ReviewDto>> getRecentReviewByUsername(
+            @AuthenticationPrincipal User user,
             @PathVariable String username
     ) {
-        return ResponseEntity.ok(reviewService.getRecentReviewsByUsername(username));
+        return ResponseEntity.ok(reviewService.getRecentReviewsByUsername(user, username));
     }
 
     @PostMapping("/{restaurantId}")
@@ -74,4 +76,11 @@ public class ReviewController {
                 DtoConverter.convertToDto(imageService.uploadNewImageToReview(user, reviewId, imageCreateDto), ImageDto.class));
     }
 
+    @PostMapping("/{reviewId}/helpful")
+    public ResponseEntity<VoteReviewDto> toggleHelpfulVote(
+            @AuthenticationPrincipal User user,
+            @PathVariable long reviewId
+    ) {
+        return ResponseEntity.ok(reviewService.toggleHelpfulVote(user, reviewId));
+    }
 }

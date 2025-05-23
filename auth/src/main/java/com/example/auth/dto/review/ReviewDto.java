@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class ReviewDto {
@@ -19,5 +20,8 @@ public class ReviewDto {
     private List<ImageDto> images;
     private UserDto createdBy;
     private RestaurantSummaryDto restaurant;
+    ///private Set<UserDto> helpfulVoters;
+    private int totalHelpfulVotes;
+    private boolean votedHelpfulByCurrentUser;
 
 }

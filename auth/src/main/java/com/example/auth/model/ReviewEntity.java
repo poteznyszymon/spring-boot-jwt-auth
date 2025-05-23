@@ -20,7 +20,7 @@ public class ReviewEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_id_seq")
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024)
     private String content;
 
     @Column(nullable = false)
@@ -45,11 +45,14 @@ public class ReviewEntity {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private RestaurantEntity restaurant;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "review_helpful_votes",
             joinColumns = @JoinColumn(name = "review_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<UserEntity> helpfulVoters = new HashSet<>();
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer totalHelpfulVotes = 0;
 }
