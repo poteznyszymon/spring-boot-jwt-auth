@@ -3,6 +3,7 @@ package com.example.auth.controller;
 import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.image.ImageCreateDto;
 import com.example.auth.dto.image.ImageDto;
+import com.example.auth.dto.review.EditReviewDto;
 import com.example.auth.dto.review.ReviewCreateDto;
 import com.example.auth.dto.review.ReviewDto;
 import com.example.auth.dto.review.VoteReviewDto;
@@ -82,5 +83,14 @@ public class ReviewController {
             @PathVariable long reviewId
     ) {
         return ResponseEntity.ok(reviewService.toggleHelpfulVote(user, reviewId));
+    }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewDto> editReviewData(
+            @AuthenticationPrincipal User user,
+            @PathVariable long reviewId,
+            @Valid @RequestBody EditReviewDto editReviewDto
+    ) {
+        return ResponseEntity.ok(reviewService.editReviewData(user, reviewId, editReviewDto));
     }
 }

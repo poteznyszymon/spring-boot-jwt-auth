@@ -6,6 +6,7 @@ import com.example.auth.dto.user.UserDto;
 import com.example.auth.dto.user.UserEditDataDto;
 import com.example.auth.exception.ResourceNotFoundException;
 import com.example.auth.model.UserEntity;
+import com.example.auth.repository.ReviewRepository;
 import com.example.auth.repository.UserRepository;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -17,10 +18,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final RatingService ratingService;
+    private final ReviewRepository reviewRepository;
 
-    public UserService(UserRepository userRepository, RatingService ratingService) {
+    public UserService(UserRepository userRepository, RatingService ratingService, ReviewRepository reviewRepository) {
         this.userRepository = userRepository;
         this.ratingService = ratingService;
+        this.reviewRepository = reviewRepository;
     }
 
     public UserEntity findByUsername(String username) {
@@ -43,6 +46,7 @@ public class UserService {
         UserDetailsDto userDto = DtoConverter.convertToDto(user.get(), UserDetailsDto.class);
         userDto.setAverageRating(ratingService.getAverageRatingByUsername(username));
         userDto.setTotalReviews(ratingService.getTotalReviewsByUsername(username));
+        userDto.setTotalHelpfulReviews(reviewRepository.countHelpfulVotesByUser(username));
 
         return userDto;
     }

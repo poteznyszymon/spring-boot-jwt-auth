@@ -1,6 +1,7 @@
 package com.example.auth.service;
 
 import com.example.auth.dto.DtoConverter;
+import com.example.auth.dto.review.EditReviewDto;
 import com.example.auth.dto.review.ReviewCreateDto;
 import com.example.auth.dto.review.ReviewDto;
 import com.example.auth.dto.review.VoteReviewDto;
@@ -19,7 +20,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,7 +74,7 @@ public class ReviewService {
                 : null;
 
         List<ReviewEntity> reviews = reviewRepository
-                .findTop2ByCreatedBy_UsernameOrderByCreatedAtDesc(username);
+                .findTop3ByCreatedBy_UsernameOrderByCreatedAtDesc(username);
 
         return reviews.stream().map(review -> {
             ReviewDto dto = DtoConverter.convertToDto(review, ReviewDto.class);
@@ -121,13 +121,11 @@ public class ReviewService {
             long reviewId
     ) throws FileUploadException {
         UserEntity currentUser = userService.findByUsername(user.getUsername());
-        ReviewEntity review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+        ReviewEntity review = getReviewById(reviewId);
 
         if (!review.getCreatedBy().equals(currentUser)) {
             throw new AccessDeniedException("Can't delete review, you are not owner");
         }
-
 
         RestaurantEntity restaurant = review.getRestaurant();
 
@@ -169,6 +167,28 @@ public class ReviewService {
         ReviewDto dto = DtoConverter.convertToDto(reviewRepository.save(review), ReviewDto.class);
         dto.setVotedHelpfulByCurrentUser(!isAlreadyHelpful);
         return new VoteReviewDto(dto, isAlreadyHelpful ? "removed" : "added");
+    }
+
+    public ReviewDto editReviewData(
+            @AuthenticationPrincipal User user,
+            long reviewId,
+            EditReviewDto editReviewDto
+    ) {
+        UserEntity currentUser = userService.findByUsername(user.getUsername());
+        ReviewEntity review = getReviewById(reviewId);
+
+        if (!review.getCreatedBy().equals(currentUser)) {
+            throw new AccessDeniedException("Can't delete review, you are not owner");
+        }
+
+        if (editReviewDto.getContent() != null) {
+            review.setContent(editReviewDto.getContent());
+        }
+        if (editReviewDto.getRating() != null) {
+            review.setRating(editReviewDto.getRating());
+        }
+
+         return DtoConverter.convertToDto(reviewRepository.save(review), ReviewDto.class);
     }
 
 }
