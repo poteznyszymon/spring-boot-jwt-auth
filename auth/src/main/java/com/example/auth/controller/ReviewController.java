@@ -33,8 +33,11 @@ public class ReviewController {
     }
 
     @GetMapping("/{username}")
-    public Page<ReviewDto> getReviewsByUsername(Pageable pageable, @PathVariable String username) {
-        return reviewService.getReviewsByUserUsername(pageable, username);
+    public Page<ReviewDto> getReviewsByUsername(Pageable pageable,
+                                                @AuthenticationPrincipal User user,
+                                                @PathVariable String username
+    ) {
+        return reviewService.getReviewsByUserUsername(pageable, user, username);
     }
 
     @GetMapping("/{username}/recent")

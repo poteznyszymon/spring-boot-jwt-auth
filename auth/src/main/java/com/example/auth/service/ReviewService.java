@@ -59,10 +59,24 @@ public class ReviewService {
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with provided id"));
     }
 
-    public Page<ReviewDto> getReviewsByUserUsername(Pageable pageable, String username) {
+    public Page<ReviewDto> getReviewsByUserUsername(Pageable pageable,
+                                                    @AuthenticationPrincipal User user,
+                                                    String username
+    ) {
+        UserEntity currentUser = (user != null)
+                ? userService.findByUsername(user.getUsername())
+                : null;
+
         return reviewRepositoryWithPagination.
                 findByCreatedBy_Username(pageable, username)
-                .map(entity -> DtoConverter.convertToDto(entity, ReviewDto.class));
+                .map(review -> {
+                    ReviewDto dto = DtoConverter.convertToDto(review, ReviewDto.class);
+
+                    if (currentUser != null && review.getHelpfulVoters().contains(currentUser)) {
+                        dto.setVotedHelpfulByCurrentUser(true);
+                    }
+                    return dto;
+                });
     }
 
     public List<ReviewDto> getRecentReviewsByUsername(
