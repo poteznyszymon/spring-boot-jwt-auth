@@ -36,6 +36,8 @@ public class SecurityConfig {
                         req -> req.requestMatchers("/api/auth/me").authenticated()
                                 .requestMatchers("/api/auth/**")
                                 .permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/restaurant/**")
+                                .permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/review/**")
                                 .permitAll()
                                 .anyRequest()

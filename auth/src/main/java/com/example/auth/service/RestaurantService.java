@@ -2,12 +2,14 @@ package com.example.auth.service;
 
 import com.example.auth.dto.DtoConverter;
 import com.example.auth.dto.restaurant.RestaurantCreateDto;
+import com.example.auth.dto.restaurant.RestaurantSummaryDto;
 import com.example.auth.exception.ResourceNotFoundException;
 import com.example.auth.model.*;
 import com.example.auth.repository.RestaurantRepository;
 import com.example.auth.repository.RestaurantRepositoryWithPagination;
 import com.example.auth.repository.ReviewRepository;
 import com.example.auth.repository.UserRepository;
+import com.example.auth.util.CuisineType;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,8 +44,11 @@ public class RestaurantService {
         this.cloudinaryService = cloudinaryService;
     }
 
-    public Page<RestaurantEntity> listRestaurants(Pageable pageable) {
-        return restaurantRepositoryWithPagination.findAll(pageable);
+    public Page<RestaurantSummaryDto> listRestaurants(Pageable pageable, CuisineType cuisineType) {
+        if (cuisineType != null) {
+            return restaurantRepositoryWithPagination.findAllByCuisineType(pageable, cuisineType).map(restaurantEntity -> DtoConverter.convertToDto(restaurantEntity, RestaurantSummaryDto.class));
+        }
+        return restaurantRepositoryWithPagination.findAll(pageable).map(restaurantEntity -> DtoConverter.convertToDto(restaurantEntity, RestaurantSummaryDto.class));
     }
 
     public RestaurantEntity getRestaurantById(long id) {

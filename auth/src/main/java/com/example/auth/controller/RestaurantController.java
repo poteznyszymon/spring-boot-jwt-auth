@@ -9,10 +9,13 @@ import com.example.auth.dto.restaurant.RestaurantSummaryDto;
 import com.example.auth.model.RestaurantEntity;
 import com.example.auth.service.ImageService;
 import com.example.auth.service.RestaurantService;
+import com.example.auth.util.CuisineType;
 import jakarta.validation.Valid;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -37,9 +40,11 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public Page<RestaurantSummaryDto> listRestaurants(Pageable pageable) {
-        return restaurantService.listRestaurants(pageable)
-                .map(entity -> DtoConverter.convertToDto(entity, RestaurantSummaryDto.class));
+    public Page<RestaurantSummaryDto> listRestaurants(
+            Pageable pageable,
+            @RequestParam(required = false) CuisineType cuisine
+    ) {
+        return restaurantService.listRestaurants(pageable, cuisine);
     }
 
     @GetMapping("/id/{id}")
@@ -55,6 +60,11 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurants.stream().map(
                 entity -> DtoConverter.convertToDto(entity, RestaurantSummaryDto.class)
         ).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/cuisines")
+    public ResponseEntity<CuisineType[]> getAllCuisinesTypes() {
+        return ResponseEntity.ok(CuisineType.values());
     }
 
     @PostMapping

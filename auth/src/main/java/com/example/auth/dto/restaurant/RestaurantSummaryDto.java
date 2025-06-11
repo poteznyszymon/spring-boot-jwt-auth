@@ -2,9 +2,12 @@ package com.example.auth.dto.restaurant;
 
 import com.example.auth.dto.address.AddressDto;
 import com.example.auth.dto.geolocation.GeolocationDto;
+import com.example.auth.dto.image.ImageDto;
 import com.example.auth.dto.operatingHours.OperatingHoursDto;
 import com.example.auth.util.CuisineType;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class RestaurantSummaryDto {
@@ -24,6 +27,8 @@ public class RestaurantSummaryDto {
     private float totalReviews;
 
     private AddressDto address;
+
+    private List<ImageDto> images;
 
     private GeolocationDto geolocation;
 
